@@ -1,0 +1,175 @@
+/* StealthWriter Sessions v1.0 */
+
+/* ── Save bar ── */
+#sw-save-bar {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 14px;
+  background: rgba(99, 102, 241, 0.06);
+  border-bottom: 1px solid rgba(99, 102, 241, 0.15);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  position: relative;
+  z-index: 9999;
+}
+
+.sw-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #6366f1;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .18s, transform .12s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.sw-save-btn:hover  { background: #4f46e5; transform: translateY(-1px); }
+.sw-save-btn:active { transform: translateY(0); }
+
+/* Count badge - now a clickable button */
+.sw-count-btn {
+  display: none; /* shown via JS only when sessions > 0 */
+  align-items: center;
+  gap: 4px;
+  background: rgba(99, 102, 241, 0.12);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s, color .15s;
+}
+.sw-count-btn:hover {
+  background: rgba(99, 102, 241, 0.22);
+  color: #a5b4fc;
+}
+
+/* ── Restored session panel ────────────────────────────────────────
+   Docked to the viewport, mounted on document.body, deliberately outside the
+   page's React root so reconciliation can never remove it. Styled as a utility
+   drawer rather than a copy of the site's output card: a snapshot is read-only
+   and must not look clickable. */
+
+#sw-restored-panel {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: min(560px, calc(100vw - 40px));
+  max-height: 62vh;
+  display: flex;
+  flex-direction: column;
+  background: #14142a;
+  border: 1px solid rgba(99, 102, 241, .4);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .55);
+  overflow: hidden;
+  z-index: 2147483644;
+  font-family: system-ui, -apple-system, sans-serif;
+  animation: sw-panel-in .18s ease-out;
+}
+
+@keyframes sw-panel-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #sw-restored-panel { animation: none; }
+}
+
+.sw-panel-hdr {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 14px;
+  background: rgba(99, 102, 241, .12);
+  border-bottom: 1px solid rgba(99, 102, 241, .2);
+  flex-shrink: 0;
+}
+
+.sw-panel-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #e0e7ff;
+  line-height: 1.3;
+}
+
+.sw-panel-sub {
+  font-size: 11px;
+  color: #8b8bb0;
+  margin-top: 2px;
+}
+
+.sw-panel-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.sw-panel-btn {
+  padding: 5px 10px;
+  background: transparent;
+  color: #a5b4fc;
+  border: 1px solid rgba(99, 102, 241, .35);
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s;
+  white-space: nowrap;
+}
+.sw-panel-btn:hover { background: rgba(99, 102, 241, .18); }
+.sw-panel-btn:focus-visible { outline: 2px solid #818cf8; outline-offset: 2px; }
+
+.sw-panel-body {
+  padding: 13px 15px;
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  font-size: 13.5px;
+  line-height: 1.7;
+  color: #c7c7e0;
+  user-select: text;
+  cursor: text;
+}
+.sw-panel-body::-webkit-scrollbar       { width: 5px; }
+.sw-panel-body::-webkit-scrollbar-track { background: transparent; }
+.sw-panel-body::-webkit-scrollbar-thumb { background: #312e81; border-radius: 4px; }
+
+.sw-panel-foot {
+  padding: 8px 15px;
+  border-top: 1px solid rgba(99, 102, 241, .15);
+  font-size: 11px;
+  color: #6b7280;
+  line-height: 1.5;
+  flex-shrink: 0;
+}
+
+/* Collapsed: header only, so the drawer can be parked out of the way. */
+#sw-restored-panel.sw-folded .sw-panel-body,
+#sw-restored-panel.sw-folded .sw-panel-foot { display: none; }
+
+/* Orphaned-content-script notice */
+.sw-stale-msg {
+  font-size: 12px;
+  color: #fbbf24;
+  margin-right: 10px;
+  align-self: center;
+}

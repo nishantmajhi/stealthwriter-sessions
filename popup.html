@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    width: 340px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f0f1a;
+    color: #e0e7ff;
+  }
+
+  .hdr {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .hdr-icon { font-size: 20px; }
+  .hdr-title { font-size: 14px; font-weight: 700; color: #e0e7ff; }
+  .hdr-sub { font-size: 11px; color: #818cf8; margin-top: 2px; }
+
+  .open-row {
+    padding: 12px 14px 0;
+  }
+  .btn-open {
+    width: 100%;
+    padding: 9px;
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-open:hover { background: #4f46e5; }
+
+  .section-label {
+    padding: 14px 14px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #818cf8;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+  }
+
+  .empty {
+    margin: 0 14px 14px;
+    padding: 20px;
+    background: #1a1a2e;
+    border: 1px dashed rgba(99,102,241,.25);
+    border-radius: 10px;
+    text-align: center;
+    color: #4b5563;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .empty strong { display: block; color: #6366f1; margin-bottom: 4px; font-size: 13px; }
+
+  #session-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 14px 14px;
+    max-height: 420px;
+    overflow-y: auto;
+  }
+  #session-list::-webkit-scrollbar { width: 4px; }
+  #session-list::-webkit-scrollbar-track { background: transparent; }
+  #session-list::-webkit-scrollbar-thumb { background: #312e81; border-radius: 4px; }
+
+  .session-card {
+    background: #1a1a2e;
+    border: 1px solid rgba(99,102,241,.2);
+    border-radius: 10px;
+    padding: 11px 12px;
+    transition: border-color .15s;
+  }
+  .session-card:hover { border-color: rgba(99,102,241,.45); }
+
+  .card-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #e0e7ff;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Shown only when session has a custom name - displays date below the name */
+  .card-date {
+    font-size: 10px;
+    color: #4b5563;
+    margin-bottom: 5px;
+  }
+
+  .card-meta {
+    font-size: 11px;
+    color: #6b7280;
+    line-height: 1.55;
+    margin-bottom: 9px;
+    margin-top: 4px;
+  }
+  .pill {
+    display: inline-block;
+    background: rgba(99,102,241,.15);
+    color: #a5b4fc;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 10px;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  .pill.green { background: rgba(34,197,94,.12); color: #86efac; }
+
+  .card-actions { display: flex; gap: 7px; }
+
+  .btn-restore {
+    flex: 1;
+    padding: 6px 10px;
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .btn-restore:hover { background: #4f46e5; }
+
+  .btn-delete {
+    padding: 6px 10px;
+    background: rgba(239,68,68,.1);
+    color: #f87171;
+    border: 1px solid rgba(239,68,68,.2);
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .btn-delete:hover { background: rgba(239,68,68,.2); }
+  .btn-delete.armed {
+    background: #ef4444;
+    color: #fff;
+    border-color: #ef4444;
+  }
+
+  .btn-rename {
+    padding: 6px 9px;
+    background: transparent;
+    color: #818cf8;
+    border: 1px solid rgba(99,102,241,.25);
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-rename:hover { background: rgba(99,102,241,.15); }
+
+  .rename-input {
+    width: 100%;
+    background: #0f0f1a;
+    border: 1px solid rgba(99,102,241,.45);
+    border-radius: 6px;
+    padding: 5px 8px;
+    font-family: inherit;
+    font-size: 12px;
+    color: #e0e7ff;
+    outline: none;
+    margin-bottom: 6px;
+    box-sizing: border-box;
+  }
+
+  .search-row { padding: 10px 14px 0; }
+  .search-input {
+    width: 100%;
+    background: #1a1a2e;
+    border: 1px solid rgba(99,102,241,.2);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-family: inherit;
+    font-size: 12px;
+    color: #e0e7ff;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .search-input::placeholder { color: #4b5563; }
+  .search-input:focus { border-color: rgba(99,102,241,.5); }
+
+  .backup-row {
+    display: flex;
+    gap: 7px;
+    padding: 0 14px 12px;
+  }
+  .btn-backup {
+    flex: 1;
+    padding: 7px;
+    background: transparent;
+    color: #818cf8;
+    border: 1px solid rgba(99,102,241,.25);
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-backup:hover { background: rgba(99,102,241,.14); }
+
+  .restoring { opacity: .6; pointer-events: none; }
+
+  .status {
+    padding: 0 14px 10px;
+    font-size: 11px;
+    color: #86efac;
+    display: none;
+  }
+  .status.err { color: #f87171; }
+
+  .footer {
+    border-top: 1px solid rgba(255,255,255,.06);
+    padding: 9px 14px;
+    font-size: 10px;
+    color: #374151;
+    text-align: center;
+  }
+  .dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #22c55e;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-icon">💾</div>
+  <div>
+    <div class="hdr-title">StealthWriter Sessions</div>
+    <div class="hdr-sub">Save and restore your work</div>
+  </div>
+</div>
+
+<div class="open-row" id="open-row">
+  <button class="btn-open" id="btn-open">Open StealthWriter</button>
+</div>
+
+<div class="search-row" id="search-row" style="display:none">
+  <input type="search" class="search-input" id="search" placeholder="Search sessions" autocomplete="off">
+</div>
+
+<div class="section-label" id="section-label">Saved Sessions</div>
+
+<div id="session-list"></div>
+
+<div class="status" id="status"></div>
+
+<div class="backup-row" id="backup-row">
+  <button class="btn-backup" id="btn-export">Export backup</button>
+  <button class="btn-backup" id="btn-import">Import backup</button>
+</div>
+
+<input type="file" id="file-input" accept="application/json,.json" style="display:none">
+
+<div class="footer">
+  <span class="dot"></span>Active on stealthwriter.ai
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>
